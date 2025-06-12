@@ -82,7 +82,6 @@ JOIN LANTACTIVITE la
 JOIN LANTPROFILGESTION lpg
   ON lpg.tpgcode = d.tpgcode
  AND lpg.lancode = 'FR'
--- Phase active au moment de DateRef
 JOIN DOSPHASE dp
   ON dp.dosid = d.dosid
  AND dp.jalcode NOT IN ('ARCEC','ARC')
@@ -95,13 +94,11 @@ JOIN LANJALON lj
 JOIN LANPHASE lp
   ON lp.phacode = dp.phacode
  AND lp.lancode = 'FR'
--- Acteur « client » courant
 JOIN DOSACTEUR da_client
   ON da_client.dosid = d.dosid
  AND da_client.rolcode =
      CASE d.taccode WHEN 'CBI' THEN 'CLIENT' WHEN 'PRET' THEN 'EMPRUNT' END
  AND da_client.dactfin IS NULL
--- Acteur garant courant
 JOIN DOSACTEUR da_garant
   ON da_garant.dosid = d.dosid
  AND da_garant.rolcode IN ('AGENCE','CAUTION','TIEASSU','GARANT','AGGARHG')
@@ -113,7 +110,6 @@ LEFT JOIN ACTADRESSE aad
  AND aad.aaddtremplace IS NULL
 LEFT JOIN ADRESSE adr
   ON adr.adrid = aad.adrid
--- Garantie active ou échu
 JOIN DOSACTGARANTIE dag
   ON dag.dosid = da_garant.dosid
  AND dag.dacordre = da_garant.dacordre
@@ -126,7 +122,6 @@ LEFT JOIN LANTGARANTIE tg
 LEFT JOIN LANPHASE tgph
   ON tgph.phacode = dag.phacode
  AND tgph.lancode = 'FR'
--- Montant impayés TTC
 LEFT JOIN (
   SELECT fre.fredosid    AS dosid,
          SUM(F_PlFact_Imp(f.facid,
@@ -142,7 +137,6 @@ LEFT JOIN (
   GROUP BY fre.fredosid
 ) imp
   ON imp.dosid = d.dosid
--- Indemnité (RUBRIQUE = 'INDRES')
 LEFT JOIN (
   SELECT fre.fredosid    AS dosid,
          SUM(F_PlFact_Imp(f.facid,
