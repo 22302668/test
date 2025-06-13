@@ -1,5 +1,3 @@
--- Version ANSI (LEFT JOIN) sans changer le résultat final
--- Reprend exactement la structure de ta requête, uniformisée avec syntaxe ANSI JOIN
 
 WITH impayes_cte AS (
   SELECT 
@@ -27,8 +25,8 @@ indemnite_cte AS (
     AND RUB.RUBCODE = 'INDRES'
   GROUP BY FRE.FREDOSID
 )
-SELECT ... -- ici vient le SELECT complet
-FROM DOSSIER
+SELECT count (*) 
+FROM DOSSIER 
 JOIN SOCIETE ON SOCIETE.ACTID = DOSSIER.ACTID
 JOIN ACTEURGESTION ON ACTEURGESTION.ACTID = SOCIETE.ACTID
 JOIN UTILISATEUR UTILISATEUR_DOSSIER ON UTILISATEUR_DOSSIER.UGECODE = SOCIETE.UGECODE AND UTILISATEUR_DOSSIER.BOLOGIN = $P{Utilisateur}
